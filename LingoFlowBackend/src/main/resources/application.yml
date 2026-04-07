@@ -1,0 +1,29 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: LingoFlowBackend
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/lingo_db?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
+    username: root
+    password: 123456
+
+  ai:
+    openai:
+      api-key: sk-uljysvxgzxyjtxyuplfmzecfytnsevmdmcmnmifljtxqinao
+      base-url: https://api.siliconflow.cn
+      chat:
+        options:
+          model: THUDM/GLM-Z1-9B-0414
+          temperature: 0.3
+          max-tokens: 2048
+mybatis-plus: 
+  global-config:
+    db-config:
+      table-prefix: lingo_
+      id-type: auto
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
