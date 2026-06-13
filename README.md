@@ -17,8 +17,53 @@ LingoFlow 是一个基于 AI 的 i+1 智能阅读平台。本项目采用前后�
 
 ## 云服务器一键启动步骤
 
-### 1. 克隆项目到服务器
+### 0. 安装 Docker 与 Docker Compose (若服务器未安装)
 
+根据您云服务器的操作系统类型，选择对应的命令执行安装：
+
+#### Ubuntu / Debian 系统：
+```bash
+# 更新软件包列表并安装 Docker 与 Docker Compose
+sudo apt-get update
+sudo apt-get install -y docker.io docker-compose-plugin
+# 启动 Docker 并设置开机自启
+sudo systemctl start docker
+sudo systemctl enable docker
+```
+
+#### CentOS / RHEL / Rocky Linux 系统：
+```bash
+# 安装工具并配置 Docker 源
+sudo yum install -y yum-utils
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+# 安装 Docker 与 Docker Compose
+sudo yum install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+# 启动 Docker 并设置开机自启
+sudo systemctl start docker
+sudo systemctl enable docker
+```
+
+---
+
+### 0.5 (推荐) 针对 1G 内存服务器开启 Swap 虚拟内存
+*如果您的云服务器内存只有 1G，Java 项目在构建时容易因内存溢出（OOM）崩溃，强烈建议在构建启动前配置 2G 的 Swap 虚拟内存：*
+```bash
+# 创建 2GB 虚拟内存文件
+sudo dd if=/dev/zero of=/swapfile bs=1M count=2048
+# 设置文件权限
+sudo chmod 600 /swapfile
+# 将文件格式化为 Swap
+sudo mkswap /swapfile
+# 启用该 Swap 虚拟内存
+sudo swapon /swapfile
+# 设置开机自动挂载
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+```
+*(运行 `free -h` 可以查看当前物理内存与虚拟内存状态。)*
+
+---
+
+### 1. 克隆项目到服务器
 登录您的云服务器，进入您想部署这个项目的文件夹，将项目代码克隆下来并进入项目根目录：
 
 ```bash
