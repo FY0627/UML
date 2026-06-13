@@ -1,0 +1,50 @@
+services:
+  lingoflow-db:
+    image: mysql:8.0
+    container_name: lingoflow-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-123456}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-lingo_db}
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./LingoFlowSQL/sql.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  lingoflow-backend:
+    build:
+      context: ./LingoFlowBackend
+      dockerfile: Dockerfile
+    container_name: lingoflow-backend
+    restart: always
+    depends_on:
+      lingoflow-db:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://lingoflow-db:3306/${MYSQL_DATABASE:-lingo_db}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_ROOT_PASSWORD:-123456}
+      - SPRING_AI_OPENAI_API_KEY=${SPRING_AI_OPENAI_API_KEY}
+      - SPRING_AI_OPENAI_BASE_URL=${SPRING_AI_OPENAI_BASE_URL:-https://api.siliconflow.cn}
+    ports:
+      - "8080:8080"
+
+  lingoflow-frontend:
+    build:
+      context: ./LingoFlowFrontend
+      dockerfile: Dockerfile
+    container_name: lingoflow-frontend
+    restart: always
+    depends_on:
+      - lingoflow-backend
+    ports:
+      - "80:80"
+
+volumes:
+  db_data:

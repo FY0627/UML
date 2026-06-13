@@ -5,7 +5,7 @@ CREATE DATABASE IF NOT EXISTS `lingo_db` DEFAULT CHARACTER SET utf8mb4 COLLATE u
 -- 2. 切换到刚刚创建的数据库
 USE `lingo_db`;
 
-为了重新执行时清空数据，先删除旧表（注意删除顺序，如果有外键约束的话）
+-- 为了重新执行时清空数据，先删除旧表（注意删除顺序，如果有外键约束的话）
 DROP TABLE IF EXISTS `lingo_message`;
 DROP TABLE IF EXISTS `lingo_correction_ticket`;
 DROP TABLE IF EXISTS `lingo_vocabulary`;
